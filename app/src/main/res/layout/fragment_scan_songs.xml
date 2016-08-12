@@ -1,0 +1,37 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.music.com.unique.ScanSongs">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:clickable="true"
+        android:focusable="true"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/scan_songs"
+        android:layout_gravity="center_horizontal|bottom"
+        android:paddingBottom="100dp"
+        android:textColor="#FFFFFF"/>
+
+    <Button
+        android:layout_width="160dp"
+        android:layout_height="60dp"
+        android:text="SCAN"
+        android:onClick="scanSongs"
+        android:textColor="#FFFFFF"
+        android:id="@+id/button"
+        android:background="@drawable/selector"
+        android:layout_gravity="center"
+        android:focusable="true"
+        android:longClickable="true"
+        />
+
+</FrameLayout>

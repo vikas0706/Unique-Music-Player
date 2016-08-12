@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/drawer"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/bg_1">
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:gravity="bottom"
+        android:fitsSystemWindows="true"
+        android:background="#3b000000"
+        sothree:umanoPanelHeight="60dp"
+        sothree:umanoShadowHeight="4dp">
+
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            >
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <include android:id="@+id/toolbar_actionbar" layout="@layout/toolbar_default"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways"/>
+            <com.search.material.library.MaterialSearchView
+                android:id="@+id/search_view"
+                style="@style/MaterialSearchViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            </RelativeLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/container"
+                >
+                <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:weightSum="100"
+                    android:background="#00ffffff">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        >
+                        <android.support.design.widget.TabLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:theme="@style/AppTheme"
+                            android:id="@+id/tab_layout"
+                            android:textColor="#ffffff"
+                            android:background="#00000000"
+                            app:tabGravity="fill"
+                            app:tabMode="scrollable"
+                            app:tabTextColor="#ffffff"
+                            app:tabSelectedTextColor="#13b0ff"
+                            android:overScrollMode="never"
+                            />
+                        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="match_parent"
+                            android:id="@+id/pager"
+                            android:layout_below="@+id/tab_layout"
+                            android:layout_height="fill_parent"
+                            android:background="#72000000">
+                        </android.support.v4.view.ViewPager>
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:gravity="top"
+            android:textSize="16sp"
+            android:fitsSystemWindows="true"
+            android:id="@+id/playerScreen"
+            android:orientation="vertical"
+            android:weightSum="100"
+            >
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="fill_parent"
+                 android:orientation="vertical"
+                 android:weightSum="100">
+             <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:weightSum="100"
+                android:id="@+id/ll"
+                android:background="#00979797"
+                >
+              <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/fullscreen_bg_gradient"
+                    android:weightSum="1">
+
+                    <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/backButton"
+                    android:background="#00ffffff"
+                    android:clickable="true"
+                    android:layout_weight="0.05"/>
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="60dp"
+                    android:paddingLeft="10dp"
+                    android:layout_weight="0.90"
+                    android:layout_gravity="top"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="17sp"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:scrollHorizontally="true"
+                        android:id="@+id/playing_song_title"
+                        android:textColor="#ffffff"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="11sp"
+                        android:paddingLeft="10dp"
+                        android:singleLine="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:focusableInTouchMode="true"
+                        android:focusable="true"
+                        android:scrollHorizontally="true"
+                        android:layout_below="@+id/playing_song_title"
+                        android:id="@+id/playing_song_artist"
+                        android:textColor="#ffffff"/>
+                </RelativeLayout>
+                    <Button
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@mipmap/ic_play"
+                        android:onClick="play_pauseClick"
+                        android:layout_weight="0.05"
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/play_in_titlebar"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="285dp"
+                    android:layout_height="285dp"
+                    android:background="#00000000"
+                    android:id="@+id/disclayout"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+                </LinearLayout>
+              </LinearLayout>
+             </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="10dp"
+                android:background="@drawable/fullscreen_bg_gradient"
+                android:id="@+id/gradient"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+            </LinearLayout>
+            <FrameLayout android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/gradient_from_down"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal|bottom"
+                android:paddingBottom="30dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left|center"
+                    android:textSize="15sp"
+                    android:id="@+id/duration_playing"
+                    android:text="00:00"
+                    android:paddingTop="20dp"
+                    android:textColor="#ffffff"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center"
+                    android:textSize="15sp"
+                    android:paddingTop="20dp"
+                    android:id="@+id/duration_total"
+                    android:text="00:00"
+                    android:textColor="#ffffff"
+                    />
+                <SeekBar
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:id="@+id/seek_music"
+                    android:layout_gravity="center|center"/>
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:id="@+id/prev"
+                    android:background="@mipmap/ic_prev"
+                    android:layout_gravity="left|bottom"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="playprev"
+                    android:layout_marginLeft="65dp"
+                    android:baselineAlignBottom="false" />
+
+                <ImageView
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:id="@+id/play_pause"
+                    android:background="@mipmap/ic_playing"
+                    android:onClick="play_pauseClick"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:clickable="true"
+                    android:paddingBottom="40dp"/>
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:id="@+id/next"
+                    android:onClick="playnext"
+                    android:background="@mipmap/ic_next"
+                    android:layout_gravity="right|bottom"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginRight="65dp" />
+
+            </FrameLayout>
+             </LinearLayout>
+             <LinearLayout
+                 android:layout_width="wrap_content"
+                 android:layout_height="420dp"
+                 android:paddingTop="60dp"
+                 android:layout_centerHorizontal="true">
+                 <ScrollView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center|bottom"
+                     android:background="#00000000"
+                     android:layout_centerHorizontal="true"
+                     android:clickable="true"
+                     android:id="@+id/scroll_view"
+                     android:fastScrollEnabled="true">
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:textIsSelectable="true"
+                         android:textSize="17sp"
+                         android:text="        Searching lyrics. . ."
+                         android:textColor="#ffd000"
+                         android:gravity="center"
+                         android:id="@+id/lyrics_textview"
+                         android:shadowColor="#000000"
+                         android:shadowRadius="10"
+                         android:shadowDx="1"
+                         android:shadowDy="1"/>
+                 </ScrollView>
+             </LinearLayout>
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressBar"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:paddingBottom="200dp"
+                    />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+
+
+    <!-- android:layout_marginTop="?android:attr/actionBarSize"-->
+    <fragment android:id="@+id/fragment_drawer"
+        android:layout_marginTop="@dimen/abc_action_bar_default_height_material"
+        android:name="player.music.com.unique.NavigationDrawerFragment"
+        android:layout_width="@dimen/navigation_drawer_width" android:layout_height="match_parent"
+        android:layout_gravity="start" app:layout="@layout/fragment_navigation_drawer" />
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">UNIQUE</string>
+    <string name="drawer_open">Menu opened</string>
+    <string name="drawer_close">Menu closed</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_songs">songs</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="hello_world">Hello world!</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_search_lyrics">SearchLyrics</string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+</resources>
