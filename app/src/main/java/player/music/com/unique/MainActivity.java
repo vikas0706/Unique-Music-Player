@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PersistableBundle;
@@ -71,9 +72,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -145,7 +150,7 @@ public class MainActivity extends ActionBarActivity
     public static Handler mHandler;
     public static ScrollView scrollView;
     static int scroll;
-
+    public static String CurrentPlayingSongName;
     //ONSTART() --------------------------------------------------->
 
     @Override
@@ -452,8 +457,10 @@ public class MainActivity extends ActionBarActivity
                     }
                 };
                 updateSeekbar.start(); */
+             CurrentPlayingSongName=str;
+             CurrentPlayingSongName= CurrentPlayingSongName.replaceAll(" ","_");
              searchLyrics(str + " " + songList.get(i).getArtist());
-                AllSongs.songAdt.notifyDataSetChanged();
+             AllSongs.songAdt.notifyDataSetChanged();
             }
         };
         lyricsTV=(TextView)findViewById(R.id.lyrics_textview);
@@ -1015,7 +1022,14 @@ public class MainActivity extends ActionBarActivity
         if(!isNetworkAvailable())
     {
         lyricsTV.setText("CHECK NETWORK CONNECTION !");
-    }else {
+        return;
+    }
+         String lyrs= getSavedLyrics();
+         if(lyrs.compareTo("")!=0){
+             lyricsTV.setText(lyrs);
+             return ;
+         }
+        {
         progressBar.setVisibility(View.VISIBLE);
 
         String s = "http://search.letssingit.com/cgi-exe/am.cgi?a=search&artist_id=&l=archive&s=";
@@ -1120,6 +1134,7 @@ public class MainActivity extends ActionBarActivity
         }
         progressBar.setVisibility(View.INVISIBLE);
         lyricsTV.setText(str);
+        saveLyrics(str,CurrentPlayingSongName);
     }
 
     //LOAD LYRICS PAGE
@@ -1216,4 +1231,60 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    //SAVE LYRICS OFFLINE
+    public void saveLyrics(String lyrics,String Name){
+        BufferedWriter out;
+        try {
+            File path=new File(Environment.getExternalStorageDirectory().toString()+"/Unique/");
+            String filename=Name;
+            if(!path.exists()){
+                path.mkdir();
+            }
+            filename=filename.replaceAll(" ","_");
+            File mypath=new File(path,filename);
+            if(mypath.exists()){
+                mypath.delete();
+            }
+            if (!mypath.exists()) {
+                mypath.createNewFile();
+                out = new BufferedWriter(new FileWriter(mypath,true));
+                out.write(lyrics);
+                out.close();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //GET SAVED LYRICS
+    public String getSavedLyrics(){
+        StringBuilder Lyrics = new StringBuilder();
+        File path=new File(Environment.getExternalStorageDirectory().toString()+"/Unique/");
+        String name=CurrentPlayingSongName;
+        File mypath=new File(path,name);
+
+        if(mypath.exists()){
+
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(mypath));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    Lyrics.append(line);
+                    Lyrics.append('\n');
+                }
+                br.close();
+
+                return Lyrics.toString();
+             //   textView.setText(text.toString());
+            }
+            catch (IOException e) {
+                //You'll need to add proper error handling here
+            }
+        }else{
+            return "";
+        }
+        return "";
+    }
 }
