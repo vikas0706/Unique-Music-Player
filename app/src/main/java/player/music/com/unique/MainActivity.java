@@ -1019,16 +1019,17 @@ public class MainActivity extends ActionBarActivity
         lwp.cancel(true);
         }catch(Exception e){
          }
+        String lyrs= getSavedLyrics();
+        if(lyrs.compareTo("")!=0){
+            lyricsTV.setText(lyrs);
+            return ;
+        }
         if(!isNetworkAvailable())
     {
         lyricsTV.setText("CHECK NETWORK CONNECTION !");
         return;
     }
-         String lyrs= getSavedLyrics();
-         if(lyrs.compareTo("")!=0){
-             lyricsTV.setText(lyrs);
-             return ;
-         }
+
         {
         progressBar.setVisibility(View.VISIBLE);
 
