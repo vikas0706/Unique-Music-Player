@@ -78,18 +78,19 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(currSong.getArtist());
         //set position as tag
         songLay.setTag(i);
-        /*AnimationSet animationSet = new AnimationSet(true);
-        Animation animation = new TranslateAnimation(metric.widthPixels / 2, 0,
-                0, 0);
-        animation.setDuration(500);
-        animationSet.addAnimation(animation);
-        animation=new ScaleAnimation((float)0.5,(float)1.0,(float)0.5,(float)1.0,(float)1.0,(float)1.0);
-        animation.setDuration(500);
-        animationSet.addAnimation(animation);
-        songLay.setAnimation(animationSet);
-        animation=null;
-        animationSet=null;
-        */
+        if(Settings.isListAnimatorSelcted) {
+            AnimationSet animationSet = new AnimationSet(true);
+            Animation animation = new TranslateAnimation(metric.widthPixels / 2, 0,
+                    0, 0);
+            animation.setDuration(500);
+            animationSet.addAnimation(animation);
+            animation = new ScaleAnimation((float) 0.5, (float) 1.0, (float) 0.5, (float) 1.0, (float) 1.0, (float) 1.0);
+            animation.setDuration(500);
+            animationSet.addAnimation(animation);
+            songLay.setAnimation(animationSet);
+            animation = null;
+            animationSet = null;
+        }
         return songLay;
     }
 }

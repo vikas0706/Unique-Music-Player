@@ -146,7 +146,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
        // items.add(new NavigationItem("PLAYLISTS", getResources().getDrawable(R.mipmap.ic_playlist)));
         items.add(new NavigationItem("SEARCH LYRICS", getResources().getDrawable(R.mipmap.ic_lyrics)));
         items.add(new NavigationItem("SCAN SONGS", getResources().getDrawable(R.mipmap.ic_scan)));
-       // items.add(new NavigationItem("SETTINGS", getResources().getDrawable(R.mipmap.ic_setting)));
+        items.add(new NavigationItem("SETTINGS", getResources().getDrawable(R.mipmap.ic_setting)));
         return items;
     }
 

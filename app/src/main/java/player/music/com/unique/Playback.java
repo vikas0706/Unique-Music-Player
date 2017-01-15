@@ -77,12 +77,16 @@ public class Playback extends Service implements
                 currSong);
         try{
             player.setDataSource(getApplicationContext(), trackUri);
+            player.setOnPreparedListener(this);
+            player.prepare();
+
+            writeSongPlayed(songPosn);
         }
         catch(Exception e){
             Log.e("MUSIC SERVICE", "Error at /Playback/playSong", e);
         }
-        player.prepareAsync();
-        writeSongPlayed(songPosn);
+
+
     }
 
 
@@ -163,6 +167,7 @@ public class Playback extends Service implements
     }
 
     public void playPrev(){
+        seek(0);
         songPosn--;
         if(songPosn==-1) songPosn=songs.size()-1;
         playSong();
@@ -170,6 +175,7 @@ public class Playback extends Service implements
     }
 
     public void playNext(){
+        seek(0);
         songPosn++;
         if(songPosn==songs.size())
             songPosn=0;

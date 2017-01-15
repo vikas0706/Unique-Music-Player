@@ -266,6 +266,8 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int i = Collections.binarySearch(sNameList, adapter.getItem(position));
+                musicSrv.seek(0);
+                seekbar.setProgress(0);
                 musicSrv.setSong(adapter.getItem(position));
                 musicSrv.playSong();
                 AllSongs.listView.smoothScrollToPosition(i);
@@ -391,7 +393,7 @@ public class MainActivity extends ActionBarActivity
             String str=intent.getStringExtra(Playback.extra);
         //  Toast.makeText(getApplicationContext(),"Broadcasting: "+str,Toast.LENGTH_SHORT).show();
             int i=Collections.binarySearch(sNameList, str);
-                currentSong(i);
+            currentSong(i);
             play_pause.setBackgroundResource(R.mipmap.ic_paused);
             play.setBackgroundResource(R.mipmap.ic_pause);
             fstSongPlayed=true;
@@ -417,6 +419,7 @@ public class MainActivity extends ActionBarActivity
             });
             totalDur.setText(((dur / 1000) / 60) + ":" + ((dur / 1000) % 60));
             scroll=0;
+
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -431,6 +434,8 @@ public class MainActivity extends ActionBarActivity
                             //  Toast.makeText(getApplicationContext(),String.valueOf(newScroll)+" Max "+String.valueOf(maxScroll),Toast.LENGTH_SHORT).show();
                             scrollView.smoothScrollTo(scroll, newScroll);
                             scroll = newScroll;
+                        }else {
+                            scrollView.scrollTo(scroll,0);
                         }
                     }
                     mHandler.postDelayed(this,1000);
@@ -663,11 +668,11 @@ public class MainActivity extends ActionBarActivity
                 fragmentTransaction.replace(R.id.container, scanSongs);
                 fragmentTransaction.commit();
                 break;
-            /*case 7:
-                Intent in=new Intent(this,SettingsActivity.class);
+            case 6:
+                Intent in=new Intent(this,Settings.class);
                 startActivity(in);
                 break;
-                 */
+
         }
     }
 
@@ -1067,7 +1072,7 @@ public class MainActivity extends ActionBarActivity
         String str = "";
         int i;
         try{
-        if(webpage.contains(" 0 results"))
+        if(webpage==null||webpage.contains(" 0 results"))
         {
             lyricsTV.setText("Unable to Find your Song");
             progressBar.setVisibility(View.INVISIBLE);
@@ -1108,7 +1113,10 @@ public class MainActivity extends ActionBarActivity
     public void getLyrics(String result)
     {
         String str = "";
-
+        if(result==null){
+            lyricsTV.setText("Unable to find your song");
+            return;
+        }
         int i=34;
         while(result.charAt(i)!='<')
         {
@@ -1125,14 +1133,29 @@ public class MainActivity extends ActionBarActivity
                 break;
             }
         }
+        int count=1;
         for(int j=i;j<result.length();j++) {
-            if(result.charAt(j)=='<'&&result.charAt(j+1)=='D'&&result.charAt(j+2)=='I')
-            {
+            if(count==0){
                 break;
+            }
+
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='D'&&result.charAt(j+2)=='I')
+            {  count++;
+               // break;
             }else
-            if(result.charAt(j)=='<') {
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='/'&&result.charAt(j+2)=='D')
+            {  count--;
+                if(count==0){
+                    break;
+                }
+                j+=5;
+            }else
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='B'&&result.charAt(j+2)=='R') {
                 j = j + 3;
                 str=str+"\n";
+            }else
+            if(count>1){
+                continue;
             }else
             {
                 str=str+result.charAt(j);
@@ -1162,6 +1185,9 @@ public class MainActivity extends ActionBarActivity
                     c++;
                     if(c<5||c>200&&c<450)
                         buffer.append(line);
+                }
+                if(isCancelled()){
+                    return null;
                 }
                 return buffer.toString();
             } catch (MalformedURLException e) {
@@ -1208,6 +1234,9 @@ public class MainActivity extends ActionBarActivity
                 String line="";
                 while((line=reader.readLine())!=null) {
                     buffer.append(line);
+                }
+                if(isCancelled()){
+                    return null;
                 }
                 return buffer.toString();
             } catch (MalformedURLException e) {

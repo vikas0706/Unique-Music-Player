@@ -18,11 +18,17 @@ public class Start extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults.length > 0 ){ if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v("PERMISSION","Permission: "+permissions[0]+ "was "+grantResults[0]);
+            Log.e("PERMISSION","Permission: "+permissions[0]+ "was "+grantResults[0]);
             //resume tasks needing this permission
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
-        }
+            this.finish();
+        } else {
+            Log.e("Permissions:", "denied");
+            this.finish();
+          }
+        }else{
+            Log.e("Permissions:","denied1");
         }
     }
 
@@ -31,18 +37,19 @@ public class Start extends AppCompatActivity {
             if ((checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED )&& (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED  )) {
-                Log.v("PERMISSION", "Permission is granted");
+                Log.e("PERMISSION", "Permission is granted");
                 return true;
             } else {
 
-                Log.v("PERMISSION", "Permission is revoked");
+                Log.e("PERMISSION", "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+               // this.finish();
                 return false;
             }
 
         }
         else { //permission is automatically granted on sdk<23 upon installation
-            Log.v("PERMISSION","Permission is granted");
+            Log.e("PERMISSION","Permission is granted");
             return true;
         }
     }
