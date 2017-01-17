@@ -232,6 +232,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
         } catch (ClassCastException e) {
             throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
         }
+        
     }
 
     @Override
