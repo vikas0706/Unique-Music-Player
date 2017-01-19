@@ -2,6 +2,7 @@ package player.music.com.unique;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -11,6 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -34,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -50,9 +54,12 @@ public class Playback extends Service implements
     ArrayList<String> currentPlayingList;
     //Song Name list
     private ArrayList<String> sNameList ;
+    //Notification
+    Notification status;
 
 
     public static final String extra="PLAYED";
+    public static final String exitapp="EXITAPP";
     private static boolean currentVersionSupportBigNotification = false;
     private static boolean currentVersionSupportLockScreenControls = false;
 
@@ -81,6 +88,7 @@ public class Playback extends Service implements
             player.prepare();
 
             writeSongPlayed(songPosn);
+            showNotification();
         }
         catch(Exception e){
             Log.e("MUSIC SERVICE", "Error at /Playback/playSong", e);
@@ -197,6 +205,7 @@ public class Playback extends Service implements
 
     public void pausePlayer(){
         player.pause();
+        showNotification();
     }
 
     public void seek(int posn){
@@ -209,6 +218,7 @@ public class Playback extends Service implements
 
     public void go(){
         player.start();
+        showNotification();
     }
 
     @Override
@@ -252,7 +262,165 @@ public class Playback extends Service implements
         }
     }
 
+    //Return Album art of particular song
+    public Bitmap getAlbumArt(int i)
+    {
+        Bitmap songImage=null;
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri uri = ContentUris.withAppendedId(sArtworkUri, songs.get(i).getAlbumId());
 
+        ContentResolver res = getApplicationContext().getContentResolver();
+        InputStream in = null;
+        try {
+            in = res.openInputStream(uri);
+            songImage = BitmapFactory.decodeStream(in);
+        } catch (FileNotFoundException e) {
+            songImage=BitmapFactory.decodeResource(getResources(),R.drawable.bg_1);
+            e.printStackTrace();
+        }
+        return songImage;
+    }
+    //Scale Bitmap for putting in imageview (If not it will use lot of space and app will crash)
+    public static Bitmap scaleBitmap(Bitmap bitmap,int newWidth,int newHeight)
+    {
+        Bitmap scaledBitmap=Bitmap.createBitmap(newWidth,newHeight, Bitmap.Config.ARGB_8888);
+        float scaleX=(float)newWidth/bitmap.getWidth();
+        float scaleY= (float)newHeight /bitmap.getHeight();
+        float scale=Math.max(scaleX,scaleY);
+        float scaleWidth=scale*bitmap.getWidth();
+        float scaleHieght=scale*bitmap.getHeight();
+        float left=(newWidth-scaleWidth)/2;
+        float top=(newHeight-scaleHieght)/2;
+        RectF targetRect=new RectF(left,top,left+scaleWidth,top+scaleHieght);
+        Canvas canvas=new Canvas(scaledBitmap);
+        canvas.drawBitmap(bitmap,null,targetRect,null);
+        return scaledBitmap;
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+    //    Toast.makeText(this,"started",Toast.LENGTH_SHORT).show();
+      //  showNotification();
+        try{
+
+        if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+         //   showNotification();
+          //  Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
+
+        } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
+         //   Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
+            playPrev();
+          //  showNotification();
+            Log.i("LOg", "Clicked Previous");
+        } else if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
+          //  Toast.makeText(this, "Clicked Play", Toast.LENGTH_SHORT).show();
+          //  showNotification();
+            if(player.isPlaying()){
+                pausePlayer();
+            }else{
+                go();
+            }
+            Log.i("LOG_TAG", "Clicked Play");
+        } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
+           // Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
+           // showNotification();
+            playNext();
+            Log.i("LOG_TAG", "Clicked Next");
+        } else if (intent.getAction().equals(
+                Constants.ACTION.STOPFOREGROUND_ACTION)) {
+            Log.i("LOG_TAG", "Received Stop Foreground Intent");
+          //  Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
+            stopForeground(true);
+            stopSelf();
+
+        }}catch (Exception e){
+            Log.e("Start Service","intents "+e.toString());
+        }
+        return START_STICKY;
+    }
+
+    //CREATE NOTIFIACTION AND SHOW NOTIFICATION
+
+    private void showNotification() {
+// Using RemoteViews to bind custom layouts into Notification
+    //    Toast.makeText(this,"ssss",Toast.LENGTH_LONG).show();
+        RemoteViews views = new RemoteViews(getPackageName(),
+                R.layout.small_notification);
+        RemoteViews bigViews = new RemoteViews(getPackageName(),
+                R.layout.big_notification);
+
+// showing default album image
+    //    views.setViewVisibility(R.id.status_bar_icon, View.VISIBLE);
+    //    views.setViewVisibility(R.id.status_bar_album_art, View.GONE);
+        views.setImageViewBitmap(R.id.imageViewAlbumArt,scaleBitmap(getAlbumArt(readsSongplayed()),200,200));
+        bigViews.setImageViewBitmap(R.id.imageViewAlbumArt,
+                scaleBitmap(getAlbumArt(readsSongplayed()),200,200));
+
+        Intent notificationIntent = new Intent(this,MainActivity.class);
+        notificationIntent.setAction(Constants.ACTION.MAIN_ACTION);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Intent previousIntent = new Intent(this, Playback.class);
+        previousIntent.setAction(Constants.ACTION.PREV_ACTION);
+        PendingIntent ppreviousIntent = PendingIntent.getService(this, 0,
+                previousIntent, 0);
+
+        Intent playIntent = new Intent(this, Playback.class);
+        playIntent.setAction(Constants.ACTION.PLAY_ACTION);
+        PendingIntent pplayIntent = PendingIntent.getService(this, 0,
+                playIntent, 0);
+
+        Intent nextIntent = new Intent(this, Playback.class);
+        nextIntent.setAction(Constants.ACTION.NEXT_ACTION);
+        PendingIntent pnextIntent = PendingIntent.getService(this, 0,
+                nextIntent, 0);
+
+        Intent closeIntent = new Intent(this, Playback.class);
+        closeIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+        PendingIntent pcloseIntent = PendingIntent.getService(this, 0,
+                closeIntent, 0);
+//        i++;
+        views.setOnClickPendingIntent(R.id.btnPlay, pplayIntent);
+        bigViews.setOnClickPendingIntent(R.id.btnPlay, pplayIntent);
+
+        views.setOnClickPendingIntent(R.id.btnNext, pnextIntent);
+        bigViews.setOnClickPendingIntent(R.id.btnNext, pnextIntent);
+
+        views.setOnClickPendingIntent(R.id.btnPrevious, ppreviousIntent);
+        bigViews.setOnClickPendingIntent(R.id.btnPrevious, ppreviousIntent);
+
+        views.setOnClickPendingIntent(R.id.btnDelete, pcloseIntent);
+        bigViews.setOnClickPendingIntent(R.id.btnDelete, pcloseIntent);
+        if(player.isPlaying()) {
+            views.setImageViewResource(R.id.btnPlay,
+                    R.mipmap.ic_pause);
+            bigViews.setImageViewResource(R.id.btnPlay,
+                    R.mipmap.ic_pause);
+        }else{
+            views.setImageViewResource(R.id.btnPlay,
+                    R.mipmap.ic_play);
+            bigViews.setImageViewResource(R.id.btnPlay,
+                    R.mipmap.ic_play);
+        }
+        views.setTextViewText(R.id.textSongName,  songs.get(songPosn).getTitl());
+        bigViews.setTextViewText(R.id.textSongName, songs.get(songPosn).getTitl());
+
+        views.setTextViewText(R.id.textArtistName, songs.get(songPosn).getArtist());
+        bigViews.setTextViewText(R.id.textArtistName, songs.get(songPosn).getArtist());
+
+        bigViews.setTextViewText(R.id.textAlbumName, songs.get(songPosn).getAlbum());
+
+        status = new Notification.Builder(this).build();
+        status.contentView = views;
+        status.bigContentView = bigViews;
+        status.flags = Notification.FLAG_ONGOING_EVENT;
+        status.icon=R.drawable.ic_play_arrow_white_48dp;
+
+        status.contentIntent = pendingIntent;
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+    }
 
 }

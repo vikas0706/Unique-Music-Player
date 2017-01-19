@@ -164,6 +164,7 @@ public class MainActivity extends ActionBarActivity
         if(playIntent==null){
             playIntent = new Intent(getApplicationContext(), Playback.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            playIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
             startService(playIntent);
 
         }
@@ -390,7 +391,15 @@ public class MainActivity extends ActionBarActivity
         broadcastReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            String str=intent.getStringExtra(Playback.extra);
+                String str=intent.getStringExtra(Playback.extra);
+                try{
+            if(str.equals(Constants.ACTION.STOPFOREGROUND_ACTION)){
+                onDestroy();
+             //   finish();
+            }
+             }catch (Exception e){
+                 Log.e("asda",e.toString());
+             }
         //  Toast.makeText(getApplicationContext(),"Broadcasting: "+str,Toast.LENGTH_SHORT).show();
             int i=Collections.binarySearch(sNameList, str);
             currentSong(i);
@@ -938,6 +947,8 @@ public class MainActivity extends ActionBarActivity
         { Log.d("Allsongs.listview","catched at setItemChecked"); }
         try {
             AllSongs.songAdt.notifyDataSetChanged();
+            searchLyrics(songList.get(i).getTitl() + " " + songList.get(i).getArtist());
+
         }catch(Exception e){
             Log.e("Mainactivity","At notify Data set");
         }
@@ -1321,5 +1332,11 @@ public class MainActivity extends ActionBarActivity
             return "";
         }
         return "";
+    }
+
+    //Start Notification Service
+    public void startNotification(){
+        Intent in= new Intent();
+
     }
 }
