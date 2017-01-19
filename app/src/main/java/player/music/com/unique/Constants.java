@@ -32,16 +32,4 @@ public class Constants {
         public static int FOREGROUND_SERVICE = 101;
     }
 
-    public static Bitmap getDefaultAlbumArt(Context context) {
-        Bitmap bm = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        try {
-            bm = BitmapFactory.decodeResource(context.getResources(),
-                    R.mipmap.ic_launcher, options);
-        } catch (Error ee) {
-        } catch (Exception e) {
-        }
-        return bm;
-    }
-
 }
