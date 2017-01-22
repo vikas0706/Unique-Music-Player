@@ -62,7 +62,7 @@ public class Playback extends Service implements
     public static final String exitapp="EXITAPP";
     private static boolean currentVersionSupportBigNotification = false;
     private static boolean currentVersionSupportLockScreenControls = false;
-
+    static boolean isplaying =true;
 
 
     public Playback() {
@@ -88,6 +88,7 @@ public class Playback extends Service implements
             player.prepare();
 
             writeSongPlayed(songPosn);
+            isplaying=true;
             showNotification();
         }
         catch(Exception e){
@@ -205,6 +206,7 @@ public class Playback extends Service implements
 
     public void pausePlayer(){
         player.pause();
+        isplaying=false;
         showNotification();
     }
 
@@ -218,6 +220,7 @@ public class Playback extends Service implements
 
     public void go(){
         player.start();
+        isplaying=true;
         showNotification();
     }
 
@@ -330,8 +333,10 @@ public class Playback extends Service implements
                 Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Log.i("LOG_TAG", "Received Stop Foreground Intent");
           //  Toast.makeText(this, "Service Stoped", Toast.LENGTH_SHORT).show();
+            pausePlayer();
             stopForeground(true);
-            stopSelf();
+          //  stopSelf();
+
 
         }}catch (Exception e){
             Log.e("Start Service","intents "+e.toString());
@@ -394,7 +399,7 @@ public class Playback extends Service implements
 
         views.setOnClickPendingIntent(R.id.btnDelete, pcloseIntent);
         bigViews.setOnClickPendingIntent(R.id.btnDelete, pcloseIntent);
-        if(player.isPlaying()) {
+        if(isplaying) {
             views.setImageViewResource(R.id.btnPlay,
                     R.mipmap.ic_pause);
             bigViews.setImageViewResource(R.id.btnPlay,

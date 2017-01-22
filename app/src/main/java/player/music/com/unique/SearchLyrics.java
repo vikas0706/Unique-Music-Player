@@ -126,14 +126,29 @@ public class SearchLyrics extends AppCompatActivity {
                 break;
             }
         }
+        int count=1;
         for(int j=i;j<result.length();j++) {
-            if(result.charAt(j)=='<'&&result.charAt(j+1)=='D'&&result.charAt(j+2)=='I')
-            {
+            if(count==0){
                 break;
+            }
+
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='D'&&result.charAt(j+2)=='I')
+            {  count++;
+                // break;
             }else
-            if(result.charAt(j)=='<') {
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='/'&&result.charAt(j+2)=='D')
+            {  count--;
+                if(count==0){
+                    break;
+                }
+                j+=5;
+            }else
+            if(result.charAt(j)=='<'&&result.charAt(j+1)=='B'&&result.charAt(j+2)=='R') {
                 j = j + 3;
                 str=str+"\n";
+            }else
+            if(count>1){
+                continue;
             }else
             {
                 str=str+result.charAt(j);
